@@ -2,6 +2,7 @@
 using System.IO;
 using System.IO.Pipes;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,7 +39,7 @@ namespace JKang.IpcServiceFramework.Hosting.NamedPipe
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 PipeSecurity pipeSecurity = new PipeSecurity();
-                PipeAccessRule psRule = new PipeAccessRule(@"Everyone", PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow);
+                PipeAccessRule psRule = new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow);
                 pipeSecurity.AddAccessRule(psRule);
                 using (var server = NamedPipeNative.CreateNamedPipe(_options.PipeName, (uint) _options.MaxConcurrentCalls, pipeSecurity))
                 {
